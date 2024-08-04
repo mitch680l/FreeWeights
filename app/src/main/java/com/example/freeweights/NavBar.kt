@@ -46,12 +46,6 @@ fun NavBar(navController: NavHostController) {
             contentDescription = "profile",
             modifier = Modifier.weight(1f),
             )
-        AnimatedIconButton(onClick = {navController.navigate("exercise")},
-            isSelected = currentRoute == "exercise",
-            icon = if (currentRoute == "exercise") Icons.Filled.Create else Icons.Outlined.Create,
-            contentDescription = "exercise",
-            modifier = Modifier.weight(1f),
-            )
         AnimatedIconButton(onClick = {navController.navigate("schedule")},
             isSelected = currentRoute == "schedule",
             icon = if (currentRoute == "schedule") Icons.Filled.DateRange else Icons.Outlined.DateRange,
@@ -64,6 +58,12 @@ fun NavBar(navController: NavHostController) {
             contentDescription = "workout",
             modifier = Modifier.weight(1f),
             )
+        AnimatedIconButton(onClick = {navController.navigate("exercise")},
+            isSelected = currentRoute == "exercise",
+            icon = if (currentRoute == "exercise") Icons.Filled.Create else Icons.Outlined.Create,
+            contentDescription = "exercise",
+            modifier = Modifier.weight(1f),
+        )
     }
 }
 

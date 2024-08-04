@@ -3,14 +3,14 @@ package com.example.freeweights
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.freeweights.Screens.ExerciseScreen
+import com.example.freeweights.Screens.ProfileScreen
+import com.example.freeweights.Screens.ScheduleScreen
+import com.example.freeweights.Screens.WorkoutScreen
 
 import com.example.freeweights.ui.theme.FreeWeightsTheme
 
