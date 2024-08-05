@@ -1,4 +1,4 @@
-package com.example.freeweights.Data
+package com.example.freeweights.data
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -23,5 +23,9 @@ interface ExerciseDao {
 
     @Delete
     suspend fun delete(exercise: Exercise)
+
+    @Update
+    suspend fun update(exercise: Exercise)
+
 
 }

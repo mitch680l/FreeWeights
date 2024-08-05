@@ -1,4 +1,4 @@
-package com.example.freeweights.Screens
+package com.example.freeweights.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,17 +34,17 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.freeweights.AppViewModelProvider
-import com.example.freeweights.Data.Exercise
+import com.example.freeweights.data.Exercise
 import com.example.freeweights.NavBar
-import kotlinx.coroutines.delay
 
 
 @Composable
 fun ExerciseScreen(navController: NavHostController,
                    viewModel: ExerciseViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
-    val exercises by viewModel.exercises.collectAsState(initial = emptyList())
+
+    val exercises by viewModel.exercises.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
-    var newExercise by remember { mutableStateOf(Exercise(name = "", muscleGroup = "", type = "", description = "", max =0)) }
+
 
     Scaffold(bottomBar = { NavBar(navController) }) { innerPadding ->
 
@@ -68,14 +68,22 @@ fun ExerciseScreen(navController: NavHostController,
             }
 
             if (showDialog) {
+                var newExercise by remember { mutableStateOf(NewExercise()) }
                 AddExerciseDialog(
                     newExercise = newExercise,
                     onExerciseChange = { updatedExercise ->
                         newExercise = updatedExercise
                     },
-                    onSave = {
-                        viewModel.addExercise(newExercise)
-                        newExercise = Exercise(name = "", muscleGroup = "", type = "", description = "", max = 0)
+                    onSave = { updatedExercise ->
+                        val newEx = updatedExercise.toExercise()
+                        if (newExercise.verify()) {
+
+                            viewModel.addExercise(newEx)
+                        }
+                        else {
+                            viewModel.addExercise(newEx)
+                        }
+
                         showDialog = false
                     },
                     onCancel = { showDialog = false }
@@ -116,16 +124,16 @@ fun ExerciseItem(exercise: Exercise, onDeleteClick: (Exercise) -> Unit) {
 
 @Composable
 fun AddExerciseDialog(
-    newExercise: Exercise,
-    onExerciseChange: (Exercise) -> Unit,
-    onSave: () -> Unit,
+    newExercise: NewExercise,
+    onExerciseChange: (NewExercise) -> Unit,
+    onSave: (NewExercise) -> Unit,
     onCancel: () -> Unit
 ) {
     var name by remember { mutableStateOf(newExercise.name) }
     var muscleGroup by remember { mutableStateOf(newExercise.muscleGroup) }
     var type by remember { mutableStateOf(newExercise.type) }
     var description by remember { mutableStateOf(newExercise.description) }
-    var max by remember { mutableStateOf(newExercise.max.toString()) } // Store max as String
+    var max by remember { mutableStateOf(newExercise.max) }
 
     AlertDialog(
         onDismissRequest = onCancel,
@@ -146,6 +154,8 @@ fun AddExerciseDialog(
                     onValueChange = { type = it },
                     label = { Text("Type") }
                 )
+
+
                 TextField(
                     value = description,
                     onValueChange = { description = it },
@@ -161,15 +171,15 @@ fun AddExerciseDialog(
         },
         confirmButton = {
             Button(onClick = {
-                val updatedExercise = Exercise(
+                val updatedExercise = NewExercise(
                     name = name,
                     muscleGroup = muscleGroup,
                     type = type,
                     description = description,
-                    max = max.toIntOrNull() ?: 0 // Handle potential parsing errors
+                    max = max // Handle potential parsing errors
                 )
 
-                onSave()
+                onSave(updatedExercise)
                 onExerciseChange(updatedExercise)
 
             }) {
@@ -183,3 +193,30 @@ fun AddExerciseDialog(
         }
     )
 }
+
+
+
+data class NewExercise(
+    val name: String = "",
+    val muscleGroup: String = "",
+    val type: String= "",
+    val description: String = "",
+    val max: String = ""
+) {
+    fun verify(): Boolean {
+        return name.isNotBlank() && muscleGroup.isNotBlank() &&
+                type.isNotBlank() && description.isNotBlank() && max.isNotBlank()
+    }
+}
+
+
+fun NewExercise.toExercise(): Exercise {
+    return Exercise(
+        name = this.name,
+        muscleGroup = this.muscleGroup,
+        type = this.type,
+        description = this.description,
+        max = this.max.toInt()
+    )
+}
+

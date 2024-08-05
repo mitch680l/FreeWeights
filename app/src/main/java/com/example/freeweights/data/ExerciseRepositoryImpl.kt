@@ -1,4 +1,4 @@
-package com.example.freeweights.Data
+package com.example.freeweights.data
 
 import kotlinx.coroutines.flow.Flow
 
@@ -22,4 +22,9 @@ class ExerciseRepositoryImpl(private val exerciseDao: ExerciseDao) : ExerciseRep
         return exerciseDao.getByName(name)
 
     }
+
+    override suspend fun updateExercise(exercise: Exercise) {
+        return exerciseDao.update(exercise)
+    }
+
 }

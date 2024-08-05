@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.freeweights.Screens.ExerciseScreen
-import com.example.freeweights.Screens.ProfileScreen
-import com.example.freeweights.Screens.ScheduleScreen
-import com.example.freeweights.Screens.WorkoutScreen
+import com.example.freeweights.screens.ExerciseScreen
+import com.example.freeweights.screens.ProfileScreen
+import com.example.freeweights.screens.ScheduleScreen
+import com.example.freeweights.screens.WorkoutScreen
 
 import com.example.freeweights.ui.theme.FreeWeightsTheme
 

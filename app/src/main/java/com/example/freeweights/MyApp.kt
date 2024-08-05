@@ -1,8 +1,8 @@
 package com.example.freeweights
 
 import android.app.Application
-import com.example.freeweights.Data.AppContainer
-import com.example.freeweights.Data.AppDataContainer
+import com.example.freeweights.data.AppContainer
+import com.example.freeweights.data.AppDataContainer
 
 
 class MyApp : Application() {

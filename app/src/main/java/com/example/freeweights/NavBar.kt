@@ -2,7 +2,6 @@ package com.example.freeweights
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
 import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -84,27 +83,27 @@ fun AnimatedIconButton(
     var isPressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(if (isPressed) 0.9f else 1.6f, label = "")
 
-        IconButton(
-            onClick = onClick,
-            modifier = Modifier
-                .scale(scale)
-                .then(modifier)
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onPress = {
-                            isPressed = true
-                            Log.d("IconButton", "Pressed")
-                            tryAwaitRelease()
-                            isPressed = false
-                        }
-                    )
-                }
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = contentDescription,
-                tint = if (isSelected) Color.Black else Color.Gray
-            )
-        }
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier
+            .scale(scale)
+            .then(modifier)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        isPressed = true
+                        Log.d("IconButton", "Pressed")
+                        tryAwaitRelease()
+                        isPressed = false
+                    }
+                )
+            }
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = if (isSelected) Color.Black else Color.Gray
+        )
+    }
 
 }

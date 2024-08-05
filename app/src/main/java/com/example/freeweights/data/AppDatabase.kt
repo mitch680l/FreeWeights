@@ -1,4 +1,4 @@
-package com.example.freeweights.Data
+package com.example.freeweights.data
 
 import android.content.Context
 import android.util.Log

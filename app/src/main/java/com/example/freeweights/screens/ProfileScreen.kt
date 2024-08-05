@@ -1,4 +1,4 @@
-package com.example.freeweights.Screens
+package com.example.freeweights.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -10,11 +10,15 @@ import androidx.navigation.NavHostController
 import com.example.freeweights.NavBar
 
 @Composable
-fun WorkoutScreen(navController: NavHostController) {
+fun ProfileScreen(navController: NavHostController) {
     Scaffold(bottomBar = { NavBar(navController) })  { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            Text("Workout Screen")
+            Text("Profile Screen")
         }
 
     }
 }
+
+
+
+
