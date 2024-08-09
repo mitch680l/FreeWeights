@@ -33,7 +33,7 @@ class ExerciseViewModel(private val exerciseRepository: ExerciseRepository) : Vi
     fun deleteExercise(exercise: Exercise) {
         viewModelScope.launch {
             exerciseRepository.deleteExercise(exercise)
-            _exercises.value = exerciseRepository.getAllExercises().first()
+            //_exercises.value = exerciseRepository.getAllExercises().first()
         }
     }
 
@@ -46,7 +46,7 @@ class ExerciseViewModel(private val exerciseRepository: ExerciseRepository) : Vi
     fun updateExercise(exercise: Exercise) {
         viewModelScope.launch {
             exerciseRepository.updateExercise(exercise)
-            //_exercises.value = exerciseRepository.getAllExercises().first()
+            _exercises.value = exerciseRepository.getAllExercises().first()
         }
     }
 }

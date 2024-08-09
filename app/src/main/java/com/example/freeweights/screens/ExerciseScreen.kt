@@ -1,5 +1,6 @@
 package com.example.freeweights.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -21,6 +24,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,23 +46,36 @@ import com.example.freeweights.NavBar
 @Composable
 fun ExerciseScreen(navController: NavHostController,
                    viewModel: ExerciseViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
-
-    val exercises by viewModel.exercises.collectAsState()
+    val exercisesState = remember { mutableStateOf<List<Exercise>>(emptyList()) }
+    //val exercises by viewModel.exercises.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
 
+    val onDelete: (Exercise) -> Unit = { exercise ->
+        viewModel.deleteExercise(exercise)
+    }
+    val onEdit: (Exercise, Int) -> Unit = { exercise, max ->
+        exercise.max = max
+        viewModel.updateExercise(exercise) }
 
-    Scaffold(bottomBar = { NavBar(navController) }) { innerPadding ->
+    LaunchedEffect(Unit) { // Collect exercises in a LaunchedEffect
+        viewModel.exercises.collect { exercises ->
+            exercisesState.value = exercises
+        }
+    }
 
-        Column(modifier = Modifier.padding(innerPadding)) {
+    Scaffold(bottomBar = { NavBar(navController) }, containerColor = MaterialTheme.colorScheme.primaryContainer) { innerPadding ->
+
+        Column(modifier = Modifier.padding(innerPadding), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Exercise List",
+                text = "Exercises",
                 style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
 
-            LazyColumn {
-                items(count = exercises.size) { exercise ->
-                    ExerciseItem(exercises[exercise]) {exerciseToDelete -> viewModel.deleteExercise(exerciseToDelete) }
+            LazyColumn() {
+                items(count = exercisesState.value.size, key = { index -> exercisesState.value[index].id }) { exerciseIndex ->
+                    val exerciseState = remember(exerciseIndex) { mutableStateOf(exercisesState.value[exerciseIndex]) }
+                    ExerciseItem(exerciseState, onDelete, onEdit)
                 }
             }
 
@@ -94,7 +112,12 @@ fun ExerciseScreen(navController: NavHostController,
 }
 
 @Composable
-fun ExerciseItem(exercise: Exercise, onDeleteClick: (Exercise) -> Unit) {
+fun ExerciseItem(exerciseState: MutableState<Exercise>,
+                 onDeleteClick: (Exercise) -> Unit,
+                 onUpdateClick: (Exercise, Int) -> Unit,
+
+) {
+    val exercise = exerciseState.value
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -108,18 +131,58 @@ fun ExerciseItem(exercise: Exercise, onDeleteClick: (Exercise) -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Text(text = exercise.name, style = MaterialTheme.typography.bodyLarge, fontSize = 20.sp)
+            Column(modifier = Modifier.padding(8.dp).weight(3f)) {
+                Text(
+                    text = exercise.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = 20.sp
+                )
                 Text(text = exercise.muscleGroup)
                 Text(text = exercise.type)
             }
-            Text(text = exercise.max.toString(), fontSize = 40.sp)
-            IconButton(onClick = {onDeleteClick(exercise) }) { // Delete button
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+            Column(modifier = Modifier.padding(8.dp).weight(2f), horizontalAlignment = Alignment.CenterHorizontally) {
+                var text = exercise.max.toString()
+
+                if (exercise.type == "Bodyweight") {
+                    text += " reps"
+                }
+                else {
+                    text += " lbs"
+                }
+                Text(text = text, fontSize = 20.sp)
+
+
+                Row(modifier = Modifier) {
+                    IconButton(onClick = { exerciseState.value = exercise.copy(max = exercise.max - 1) // Update exercise within state
+                        onUpdateClick(exerciseState.value, exercise.max - 1)  }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "Minus 1"
+                        )
+                    }
+                    IconButton(onClick = { exerciseState.value = exercise.copy(max = exercise.max + 1) // Update exercise within state
+                        onUpdateClick(exerciseState.value, exercise.max + 1)  }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowForward,
+                            contentDescription = "Plus 1"
+                        )
+                    }
+                }
+
             }
+            Column(modifier = Modifier.padding(8.dp).weight(1f)) {
+                IconButton(onClick = { onDeleteClick(exercise) }) { // Delete button
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+                }
+            }
+
+
+
         }
     }
+
 }
+
 
 
 @Composable
@@ -141,7 +204,8 @@ fun AddExerciseDialog(
         text = {
             Column {
                 TextField(
-                    value = name,onValueChange = { name = it },
+                    value = name,
+                    onValueChange = { name = it },
                     label = { Text("Exercise Name") }
                 )
                 TextField(

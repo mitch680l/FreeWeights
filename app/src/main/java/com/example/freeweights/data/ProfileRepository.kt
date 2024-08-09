@@ -1,25 +1,24 @@
 package com.example.freeweights.data
 
-class ProfileRepository @Inject constructor(
+import kotlinx.coroutines.flow.Flow
+
+class ProfileRepository constructor(
     private val profileDao: ProfileDao
 ) {
 
-    suspend fun insertProfile(profile: androidx.webkit.Profile) {
+    suspend fun insertProfile(profile: Profile) {
         profileDao.insertProfile(profile)
     }
 
-    suspend fun updateProfile(profile: androidx.webkit.Profile) {
+    suspend fun updateProfile(profile: Profile) {
         profileDao.updateProfile(profile)
     }
 
-    suspend fun deleteProfile(profile: androidx.webkit.Profile) {
-        profileDao.deleteProfile(profile)}
-
-    fun getProfileById(profileId: Int): Flow<androidx.webkit.Profile> {
-        return profileDao.getProfileById(profileId)
+    suspend fun deleteProfile(profile: Profile) {
+        profileDao.deleteProfile(profile)
     }
 
-    fun getAllProfiles(): Flow<List<androidx.webkit.Profile>> {
+    fun getAllProfiles(): Flow<List<Profile>> {
         return profileDao.getAllProfiles()
     }
 }

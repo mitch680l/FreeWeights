@@ -1,20 +1,24 @@
 package com.example.freeweights.data
 
-@androidx.room.Dao
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+
+@Dao
 interface ProfileDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertProfile(profile: Profile)
 
-    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
-    suspend fun insertProfile(profile: androidx.webkit.Profile)
+    @Update
+    suspend fun updateProfile(profile: Profile)
 
-    @androidx.room.Update
-    suspend fun updateProfile(profile: androidx.webkit.Profile)
+    @Delete
+    suspend fun deleteProfile(profile: Profile)
 
-    @androidx.room.Delete
-    suspend fun deleteProfile(profile: androidx.webkit.Profile)
-
-    @androidx.room.Query("SELECT * FROM profile WHERE id = :profileId")
-    fun getProfileById(profileId: Int): Flow<androidx.webkit.Profile>
-
-    @androidx.room.Query("SELECT * FROM profile")
-    fun getAllProfiles(): Flow<List<androidx.webkit.Profile>>
+    @Query("SELECT * FROM profile")
+    fun getAllProfiles(): Flow<List<Profile>>
 }
